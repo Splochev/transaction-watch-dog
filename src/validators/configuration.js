@@ -17,7 +17,7 @@ class ConfigurationValidator {
     } catch (error) {
       throw this.errorHandler.generateError({
         error: new Error(error),
-        message: "Invalid configurations",
+        message: error.message || "Invalid configurations",
         status: 400,
       });
     }
@@ -29,7 +29,7 @@ class ConfigurationValidator {
     } catch (error) {
       throw this.errorHandler.generateError({
         error: new Error(error),
-        message: "Invalid configuration",
+        message: error.message || "Invalid configuration",
         status: 400,
       });
     }

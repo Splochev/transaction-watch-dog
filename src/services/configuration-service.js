@@ -16,8 +16,13 @@ class ConfigurationService {
     this.configurations = [];
 
     this._initialize();
+    this._watchConfigurationsFile();
 
     ConfigurationService.instance = this;
+  }
+
+  initialize() {
+    this();
   }
 
   _getConfigurationsPath() {
@@ -57,7 +62,9 @@ class ConfigurationService {
 
     return this.configurations.some((config) => {
       const { id: configId, name: configName, ...configRest } = config;
-      return _.isEqual(rest, configRest);
+      return (
+        _.isEqual(rest, configRest) || id === configId || name === configName
+      );
     });
   }
 
@@ -65,6 +72,29 @@ class ConfigurationService {
     return this.configurations.findIndex(
       (config) => config.id === configurationId
     );
+  }
+
+  _watchConfigurationsFile() {
+    const reloadConfigurations = _.debounce(() => {
+      try {
+        this.logger.log("[INFO] Reloading configurations...");
+        this._loadConfigurations();
+        this.logger.log("[INFO] Configurations reloaded successfully.");
+      } catch (error) {
+        this.logger.log({
+          message: "[ERROR] Failed to reload configurations:",
+          error: error.message,
+        });
+      }
+    }, 300);
+
+    fs.watchFile(this.configurationsPath, { interval: 500 }, (curr, prev) => {
+      if (curr.mtime !== prev.mtime) {
+        reloadConfigurations();
+      }
+    });
+
+    this.logger.log("[INFO] Watching configuration.json for changes...");
   }
 
   get() {

@@ -14,6 +14,8 @@ app.use(scopePerRequest(container));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+container.resolve("configurationService");
+
 app.use((req, res, next) => {
   res.setTimeout(SERVER_TIMEOUT, () => {
     console.error("Request has timed out");

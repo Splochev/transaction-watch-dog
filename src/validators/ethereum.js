@@ -17,7 +17,7 @@ class EthereumValidator {
     } catch (error) {
       throw this.errorHandler.generateError({
         error,
-        message: "Invalid transaction hashes",
+        message: error.message || "Invalid transaction hashes",
         status: 400,
       });
     }
@@ -30,7 +30,7 @@ class EthereumValidator {
     } catch (error) {
       throw this.errorHandler.generateError({
         error,
-        message: "Invalid transaction objects",
+        message: error.message || "Invalid transaction objects",
         status: 400,
       });
     }

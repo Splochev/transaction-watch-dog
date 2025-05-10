@@ -14,7 +14,25 @@ const configurationSchema = z.object({
   }),
 });
 
-const configurationsSchema = z.array(configurationSchema);
+const configurationsSchema = z.array(configurationSchema).refine(
+  (configurations) => {
+    const ids = new Set();
+    const names = new Set();
+
+    for (const config of configurations) {
+      if (ids.has(config.id) || names.has(config.name)) {
+        return false;
+      }
+      ids.add(config.id);
+      names.add(config.name);
+    }
+
+    return true;
+  },
+  {
+    message: "Configurations must have unique 'id' and 'name' values",
+  }
+);
 
 module.exports = {
   configurationSchema,
