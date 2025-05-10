@@ -2,7 +2,7 @@ const { ethers } = require("ethers");
 const _ = require("lodash");
 
 class EthereumService {
-  constructor({ logger, errorHandler }) {
+  constructor({ logger, errorHandler, ethereumValidator }) {
     if (EthereumService.instance) {
       return EthereumService.instance;
     }
@@ -11,42 +11,29 @@ class EthereumService {
     if (!API_KEY) {
       throw new Error("API_KEY is not set");
     }
+    const url = `https://mainnet.infura.io/v3/${API_KEY}`;
 
-    this.provider = new ethers.JsonRpcProvider(
-      `https://mainnet.infura.io/v3/${API_KEY}`
-    );
+    this.provider = new ethers.JsonRpcProvider(url);
     this.logger = logger;
     this.errorHandler = errorHandler;
+    this.ethereumValidator = ethereumValidator;
 
     EthereumService.instance = this;
   }
 
-  async getTransactionsByHashes(transactionHashes, existingTransactions) {
-    if (
-      !Array.isArray(transactionHashes) ||
-      !this.isValidTransactionHashArr(transactionHashes)
-    ) {
-      throw this.errorHandler.generateError({
-        error: new Error("Invalid transaction hashes"),
-        status: 400,
-      });
-    }
-
-    if (
-      existingTransactions &&
-      !this.isValidExistingTransactions(existingTransactions)
-    ) {
-      throw this.errorHandler.generateError({
-        error: new Error("Invalid existing transactions"),
-        status: 400,
-      });
-    }
-
+  async getTransactionsByHashes(transactionHashes, transactionObjects) {
     try {
-      const transactions =
-        existingTransactions ||
-        (await this.fetchTransactions(transactionHashes));
-      const receipts = await this.fetchReceipts(transactionHashes);
+      this.ethereumValidator.assertValidTransactionHashes(transactionHashes);
+      this.ethereumValidator.assertValidTransactionObjects(
+        transactionObjects,
+        false
+      );
+
+      const { transactions, receipts } =
+        await this.fetchTransactionsAndReceipts(
+          transactionHashes,
+          transactionObjects
+        );
 
       return this.mergeTransactionsAndReceipts(transactions, receipts);
     } catch (error) {
@@ -54,29 +41,20 @@ class EthereumService {
     }
   }
 
-  isValidTransactionHashArr(transactionHashes) {
-    return transactionHashes.every(
-      (hash) => typeof hash === "string" && hash.startsWith("0x")
-    );
-  }
+  async fetchTransactionsAndReceipts(transactionHashes, transactionObjects) {
+    const transactionPromises = [];
+    const receiptPromises = [];
 
-  isValidExistingTransactions(transactions) {
-    return (
-      Array.isArray(transactions) &&
-      transactions.every((tx) => typeof tx === "object")
-    );
-  }
+    transactionHashes.forEach((hash) => {
+      if (!transactionObjects) {
+        transactionPromises.push(this.provider.getTransaction(hash));
+      }
+      receiptPromises.push(this.provider.getTransactionReceipt(hash));
+    });
 
-  async fetchTransactions(transactionHashes) {
-    return Promise.all(
-      transactionHashes.map((hash) => this.provider.getTransaction(hash))
-    );
-  }
-
-  async fetchReceipts(transactionHashes) {
-    return Promise.all(
-      transactionHashes.map((hash) => this.provider.getTransactionReceipt(hash))
-    );
+    const transactions = transactionObjects || (await Promise.all(transactionPromises));
+    const receipts = await Promise.all(receiptPromises);
+    return { transactions, receipts };
   }
 
   mergeTransactionsAndReceipts(transactions, receipts) {
