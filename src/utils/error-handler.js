@@ -1,12 +1,13 @@
 module.exports = class ErrorHandler {
   generateError({ error, message, status }) {
-    error.status = status || error.status;
-    
-    if (message) {
+    if (!error) {
+      error = new Error(message);
+    } else if (error && message) {
       error.message = message;
       error.originalErrorMessage = error.message;
     }
 
+    error.status = status || error.status || 500;
     error.stack = error.stack;
     return error;
   }
