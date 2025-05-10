@@ -1,4 +1,3 @@
-// filepath: c:\Users\Stani\work\transaction-watch-dog\src\logger\logger.js
 const winston = require("winston");
 const path = require("path");
 const fs = require("fs");
@@ -26,7 +25,7 @@ class Logger {
     this.cleanupOldLogs(serverLogsDir, maxDaysToStoreLogs);
 
     this.logger = this.createLogger(this.serverLogsDir);
-    Logger.instance = this; // Save the singleton instance
+    Logger.instance = this;
   }
 
   ensureDirExists(dir) {
@@ -76,20 +75,27 @@ class Logger {
     });
   }
 
-  log(message, type) {
-    switch (type) {
-      case "error":
-        this.logger.error(message);
-        break;
-      case "warn":
-        this.logger.warn(message);
-        break;
-      case "info":
-        this.logger.info(message);
-        break;
-      default:
-        console.log(message);
+  error(message) {
+    if (message.stack) {
+      this.logger.error({
+        message: message.message,
+        stack: message.stack,
+      });
+    } else {
+      this.logger.error(message);
     }
+  }
+
+  warn(message) {
+    this.logger.warn(message);
+  }
+
+  info(message) {
+    this.logger.info(message);
+  }
+
+  log(message) {
+    console.log(message);
   }
 }
 

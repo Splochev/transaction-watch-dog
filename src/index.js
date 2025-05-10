@@ -16,19 +16,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   const logger = req.container.resolve("logger");
-  logger.log(
-    {
-      method: req.method,
-      path: req.path,
-      query: req.query,
-      body: req.body,
-    },
-    "info"
-  );
+  logger.info({
+    method: req.method,
+    path: req.path,
+    query: req.query,
+    body: req.body,
+  });
   next();
 });
 
 mountApi(app);
+
+app.use((error, req, res, next) => {
+  const logger = req.container.resolve("logger");
+  logger.error(error);
+  logger.log(error);
+  res.status(error.status || 500).json({
+    error: {
+      message: error.message || "Internal Server Error",
+    },
+  });
+});
 
 // Start Server
 app.listen(PORT, () => {
