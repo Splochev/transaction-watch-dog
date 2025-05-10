@@ -7,11 +7,9 @@ const mountApi = require("./api");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Setup DI Container
 const container = setupContainer();
 app.use(scopePerRequest(container));
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use((req, res, next) => {
@@ -38,7 +36,6 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start Server
 app.listen(PORT, () => {
   const logger = container.resolve("logger");
   logger.log(`Server running on port ${PORT}`);
