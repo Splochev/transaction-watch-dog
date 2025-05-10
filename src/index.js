@@ -4,6 +4,7 @@ const { scopePerRequest } = require("awilix-express");
 const setupContainer = require("./container");
 const mountApi = require("./api");
 
+const SERVER_TIMEOUT = Number(process.env.SERVER_TIMEOUT || 600000);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,6 +13,15 @@ app.use(scopePerRequest(container));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use((req, res, next) => {
+  res.setTimeout(SERVER_TIMEOUT, () => {
+    console.error("Request has timed out");
+    res.status(408).send("Request Timeout");
+  });
+  next();
+});
+
 app.use((req, res, next) => {
   const logger = req.container.resolve("logger");
   logger.info({
