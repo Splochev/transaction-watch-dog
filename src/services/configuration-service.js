@@ -60,7 +60,6 @@ class ConfigurationService extends EventEmitter {
     this.configurationValidator.assertValidConfiguration(configuration);
     this.configuration = configuration;
 
-    // Emit an event whenever configuration are loaded or updated
     this.emit("configurationUpdated", this.configuration);
   }
 
@@ -113,6 +112,11 @@ class ConfigurationService extends EventEmitter {
     });
 
     this.logger.info("[INFO] Watching configuration.json for changes...", true);
+  }
+
+  cleanup() {
+    fs.unwatchFile(this.configurationPath);
+    this.logger.info("[INFO] Stopped watching configuration.json for changes.", true);
   }
 
   get() {

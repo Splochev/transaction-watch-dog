@@ -1,47 +1,25 @@
 const { ethers } = require("ethers");
 
 class EthereumService {
-  constructor({
-    logger,
-    errorHandler,
-    ethereumValidator,
-    configurationService,
-    db,
-    transactionService,
-  }) {
+  constructor(dependencies) {
     if (EthereumService.instance) {
       return EthereumService.instance;
     }
 
-    this._initializeDependencies({
-      logger,
-      errorHandler,
-      ethereumValidator,
-      configurationService,
-      db,
-      transactionService,
-    });
-
+    this._initializeDependencies(dependencies);
     this._initializeProvider();
     this._initializeConfiguration();
 
     EthereumService.instance = this;
   }
 
-  _initializeDependencies({
-    logger,
-    errorHandler,
-    ethereumValidator,
-    configurationService,
-    db,
-    transactionService,
-  }) {
-    this.logger = logger;
-    this.errorHandler = errorHandler;
-    this.ethereumValidator = ethereumValidator;
-    this.transactionModel = db.Transaction;
-    this.transactionService = transactionService;
-    this.configurationService = configurationService;
+  _initializeDependencies(dependencies) {
+    this.logger = dependencies.logger;
+    this.errorHandler = dependencies.errorHandler;
+    this.ethereumValidator = dependencies.ethereumValidator;
+    this.transactionModel = dependencies.db.Transaction;
+    this.transactionService = dependencies.transactionService;
+    this.configurationService = dependencies.configurationService;
   }
 
   _initializeProvider() {
@@ -54,21 +32,28 @@ class EthereumService {
   }
 
   _initializeConfiguration() {
-    this.configuration = this.configurationService.get();
-    this.configurationService.on(
-      "configurationUpdated",
-      (newConfiguration) => {
-        this.logger.info(
-          "[INFO] Configuration updated in EthereumService",
-          true
-        );
-        this.configuration = newConfiguration;
-      }
-    );
+    const configuration = this.configurationService.get();
+    this.rules = configuration.rules;
+    this.delayBlocks = configuration.delayBlocks;
+
+    this.configurationService.on("configurationUpdated", (newConfiguration) => {
+      this.logger.info("[INFO] Configuration updated in EthereumService", true);
+      this.rules = newConfiguration.rules;
+      this.delayBlocks = newConfiguration.delayBlocks;
+    });
   }
 
   initialize() {
     this();
+  }
+
+  cleanup() {
+    if (this.configurationUpdatedListener) {
+      this.configurationService.off(
+        "configurationUpdated",
+        this.configurationUpdatedListener
+      );
+    }
   }
 
   async getTransactionsByHashes(transactionHashes, transactionObjects) {

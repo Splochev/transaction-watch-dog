@@ -14,8 +14,8 @@ app.use(scopePerRequest(container));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-container.resolve("configurationService");
-container.resolve("ethereumService");
+const ethereumService = container.resolve("ethereumService");
+const configurationService = container.resolve("configurationService");
 
 app.use((req, res, next) => {
   res.setTimeout(SERVER_TIMEOUT, () => {
@@ -48,7 +48,26 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   const logger = container.resolve("logger");
   logger.info(`Server running on port ${PORT}`, true);
 });
+
+const shutdown = async () => {
+  const logger = container.resolve("logger");
+  try {
+    logger.info("Shutting down application...", true);
+    ethereumService.cleanup();
+    configurationService.cleanup();
+    server.close(() => {
+      logger.info("Server closed", true);
+      process.exit(0);
+    });
+  } catch (error) {
+    logger.error({ message: "Error during shutdown", error }, true);
+    process.exit(1);
+  }
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
