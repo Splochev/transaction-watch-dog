@@ -15,9 +15,12 @@ class ConfigurationValidator {
     try {
       this.configurationSchema.parse(configuration);
     } catch (error) {
+      const issues = error.issues.map((issue) => {
+        return `${issue.code}, expected ${issue.expected}, received ${issue.received} for fields [${issue.path.join(", ")}]`;
+      });
+
       throw this.errorHandler.generateError({
-        error: new Error(error),
-        message: error.message || "Invalid configuration",
+        message: issues.join("; \n"),
         status: 400,
       });
     }
@@ -27,9 +30,12 @@ class ConfigurationValidator {
     try {
       this.ruleSchema.parse(rule);
     } catch (error) {
+      const issues = error.issues.map((issue) => {
+        return `${issue.code}, expected ${issue.expected}, received ${issue.received} for fields [${issue.path.join(", ")}]`;
+      });
+
       throw this.errorHandler.generateError({
-        error: new Error(error),
-        message: error.message || "Invalid rule",
+        message: issues.join("; \n"),
         status: 400,
       });
     }

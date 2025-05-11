@@ -4,12 +4,6 @@ const Logger = require("../logger/logger");
 const ErrorHandler = require("../utils/error-handler");
 const EthereumService = require("../services/ethereum-service");
 const ConfigurationService = require("../services/configuration-service");
-const TransactionService = require("../services/transaction-service");
-const EthereumValidator = require("../validators/ethereum");
-const {
-  transactionHashesSchema,
-  transactionsSchema,
-} = require("../schemas/ethereum");
 const {
   ruleSchema,
   configurationSchema,
@@ -21,16 +15,12 @@ module.exports = function setupContainer() {
 
   container.register({
     db: asValue(db),
-    transactionHashesSchema: asValue(transactionHashesSchema),
-    transactionsSchema: asValue(transactionsSchema),
     ruleSchema: asValue(ruleSchema),
     configurationSchema: asValue(configurationSchema),
     logger: asClass(Logger).singleton(),
     errorHandler: asClass(ErrorHandler).singleton(),
     ethereumService: asClass(EthereumService).singleton(),
     configurationService: asClass(ConfigurationService).singleton(),
-    transactionService: asClass(TransactionService).singleton(),
-    ethereumValidator: asClass(EthereumValidator).singleton(),
     configurationValidator: asClass(ConfigurationValidator).singleton(),
   });
 

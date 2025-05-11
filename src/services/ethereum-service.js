@@ -10,16 +10,14 @@ class EthereumService {
     this._initializeProvider();
     this._initializeConfiguration();
 
-    this.monitorBlockchain();
+    // this.monitorBlockchain();
     EthereumService.instance = this;
   }
 
   _initializeDependencies(dependencies) {
     this.logger = dependencies.logger;
     this.errorHandler = dependencies.errorHandler;
-    this.ethereumValidator = dependencies.ethereumValidator;
     this.transactionModel = dependencies.db.Transaction;
-    this.transactionService = dependencies.transactionService;
     this.configurationService = dependencies.configurationService;
   }
 
@@ -103,7 +101,10 @@ class EthereumService {
         ],
       });
     } catch (error) {
-      console.error("[ERROR] Failed to insert transactions:", error);
+      this.logger.error({
+        message: "[ERROR] Failed to insert transactions:",
+        error,
+      });
     }
   }
 
@@ -130,13 +131,6 @@ class EthereumService {
         this.configurationUpdatedListener
       );
     }
-  }
-
-  async getTransactionsByHashes(transactionHashes, transactionObjects) {
-    return this.transactionService.getTransactionsByHashes(
-      transactionHashes,
-      transactionObjects
-    );
   }
 }
 

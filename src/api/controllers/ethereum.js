@@ -1,4 +1,4 @@
-module.exports = ({ logger, errorHandler, ethereumService, db }) => ({
+module.exports = ({}) => ({
   health: async (req, res, next) => {
     try {
       res.json({ status: "ok" });
