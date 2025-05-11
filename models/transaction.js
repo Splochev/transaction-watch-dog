@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       provider: DataTypes.JSONB,
       blobGasUsed: DataTypes.STRING,
       blobGasPrice: DataTypes.STRING,
-      configurationId: {
+      ruleId: {
         type: DataTypes.STRING,
         allowNull: false,
       },

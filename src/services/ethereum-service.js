@@ -23,7 +23,7 @@ class EthereumService {
     });
 
     this._initializeProvider();
-    this._initializeConfigurations();
+    this._initializeConfiguration();
 
     EthereumService.instance = this;
   }
@@ -53,16 +53,16 @@ class EthereumService {
     this.provider = new ethers.JsonRpcProvider(url);
   }
 
-  _initializeConfigurations() {
-    this.configurations = this.configurationService.get();
+  _initializeConfiguration() {
+    this.configuration = this.configurationService.get();
     this.configurationService.on(
-      "configurationsUpdated",
-      (newConfigurations) => {
+      "configurationUpdated",
+      (newConfiguration) => {
         this.logger.info(
-          "[INFO] Configurations updated in EthereumService",
+          "[INFO] Configuration updated in EthereumService",
           true
         );
-        this.configurations = newConfigurations;
+        this.configuration = newConfiguration;
       }
     );
   }

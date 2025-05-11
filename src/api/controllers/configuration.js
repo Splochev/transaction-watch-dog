@@ -1,44 +1,43 @@
 module.exports = ({ configurationService }) => ({
   get: async (req, res, next) => {
     try {
-      const configurations = configurationService.get();
-      res.status(200).json(configurations);
-    } catch (error) {
-      next(error);
-    }
-  },
-  getById: async (req, res, next) => {
-    try {
-      const configurationId = req.params.id;
-      const configuration = await configurationService.getById(configurationId);
+      const configuration = configurationService.get();
       res.status(200).json(configuration);
     } catch (error) {
       next(error);
     }
   },
-  create: async (req, res, next) => {
+  addRule: async (req, res, next) => {
     try {
-      const configuration = req.body;
-      await configurationService.create(configuration);
-      res.status(201).json({ message: "Configuration created successfully" });
+      const rule = req.body;
+      await configurationService.addRule(rule);
+      res.status(201).json({ message: "Rule added successfully" });
     } catch (error) {
       next(error);
     }
   },
-  update: async (req, res, next) => {
+  updateRule: async (req, res, next) => {
     try {
-      const configuration = req.body;
-      await configurationService.update(configuration);
-      res.status(200).json({ message: "Configuration updated successfully" });
+      const rule = req.body;
+      await configurationService.updateRule(rule);
+      res.status(200).json({ message: "Rule updated successfully" });
     } catch (error) {
       next(error);
     }
   },
-  delete: async (req, res, next) => {
+  updateDelayBlocks: async (req, res, next) => {
+    const delayBlocks = req.body.delayBlocks;
     try {
-      const configurationId = req.params.id;
-      await configurationService.delete(configurationId);
-      res.status(200).json({ message: "Configuration deleted successfully" });
+      await configurationService.updateDelayBlocks(delayBlocks);
+      res.status(200).json({ message: "Delay blocks updated successfully" });
+    } catch (error) {
+      next(error);
+    }
+  },
+  deleteRule: async (req, res, next) => {
+    try {
+      await configurationService.deleteRule(req.params.id);
+      res.status(200).json({ message: "Rule deleted successfully" });
     } catch (error) {
       next(error);
     }

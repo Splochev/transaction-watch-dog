@@ -11,8 +11,8 @@ const {
   transactionsSchema,
 } = require("../schemas/ethereum");
 const {
+  ruleSchema,
   configurationSchema,
-  configurationsSchema,
 } = require("../schemas/configuration");
 const ConfigurationValidator = require("../validators/configuration");
 
@@ -23,8 +23,8 @@ module.exports = function setupContainer() {
     db: asValue(db),
     transactionHashesSchema: asValue(transactionHashesSchema),
     transactionsSchema: asValue(transactionsSchema),
+    ruleSchema: asValue(ruleSchema),
     configurationSchema: asValue(configurationSchema),
-    configurationsSchema: asValue(configurationsSchema),
     logger: asClass(Logger).singleton(),
     errorHandler: asClass(ErrorHandler).singleton(),
     ethereumService: asClass(EthereumService).singleton(),

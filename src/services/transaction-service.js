@@ -7,17 +7,19 @@ class TransactionService {
       return TransactionService.instance;
     }
 
+    this._initializeProvider();
+    this.ethereumValidator = ethereumValidator;
+
+    TransactionService.instance = this;
+  }
+
+  _initializeProvider() {
     const API_KEY = process.env.API_KEY;
     if (!API_KEY) {
       throw new Error("API_KEY is not set");
     }
-
-    this.ethereumValidator = ethereumValidator;
-    this.provider = new ethers.JsonRpcProvider(
-      `https://mainnet.infura.io/v3/${API_KEY}`
-    );
-
-    TransactionService.instance = this;
+    const url = `https://mainnet.infura.io/v3/${API_KEY}`;
+    this.provider = new ethers.JsonRpcProvider(url);
   }
 
   async getTransactionsByHashes(transactionHashes, transactionObjects) {

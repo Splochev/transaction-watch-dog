@@ -6,9 +6,9 @@ const api = makeInvoker(configuration);
 const router = Router();
 
 router.get("/", api("get"));
-router.get("/:id", api("getById"));
-router.post("/", api("create"));
-router.put("/", api("update"));
-router.delete("/:id", api("delete"));
+router.post("/", api("addRule"));
+router.put("/", api("updateRule"));
+router.put("/delay-blocks", api("updateDelayBlocks"));
+router.delete("/:id", api("deleteRule"));
 
 module.exports = router;

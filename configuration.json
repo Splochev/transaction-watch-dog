@@ -1,80 +1,68 @@
-[
-  {
-    "id": "rule-001",
-    "name": "Monitor USDT Transfers to Specific Wallet",
-    "enabled": true,
-    "match": {
-      "to": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-      "method": "transfer",
-      "params": {
-        "to": "0xYourTargetAddressHere"
+{
+  "delayBlocks": 6,
+  "rules": [
+    {
+      "id": "rule-001",
+      "name": "Monitor USDT Transfers to Specific Wallet",
+      "enabled": true,
+      "match": {
+        "to": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "method": "transfer",
+        "params": {
+          "to": "0xYourTargetAddressHere"
+        }
       }
     },
-    "delayBlocks": 0,
-    "createdAt": "2025-05-10T12:00:00Z",
-    "updatedAt": "2025-05-10T12:00:00Z"
-  },
-  {
-    "id": "rule-002",
-    "name": "High Value ETH Transfers",
-    "enabled": true,
-    "match": {
-      "valueGreaterThan": "1000000000000000000"
-    },
-    "delayBlocks": 6,
-    "createdAt": "2025-05-10T12:01:00Z",
-    "updatedAt": "2025-05-10T12:01:00Z"
-  },
-  {
-    "id": "rule-003",
-    "name": "ERC721 Transfer From Whitelisted Contracts",
-    "enabled": true,
-    "match": {
-      "contractType": "ERC721",
-      "method": "transferFrom",
-      "fromWhitelist": [
-        "0x1111...abcd",
-        "0x2222...abcd"
-      ],
-      "toBlacklist": [
-        "0xdeadbeef...1234"
-      ],
-      "topics": [
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
-      ]
-    },
-    "delayBlocks": 3,
-    "createdAt": "2025-05-10T12:10:00Z",
-    "updatedAt": "2025-05-10T12:10:00Z"
-  },
-  {
-    "id": "rule-004",
-    "name": "ERC1155 Safe Transfer - Watch for Specific Token ID",
-    "enabled": true,
-    "match": {
-      "contractType": "ERC1155",
-      "method": "safeTransferFrom",
-      "params": {
-        "id": "123456789",
-        "to": "0xYourGameAddressHere"
+    {
+      "id": "rule-002",
+      "name": "High Value ETH Transfers",
+      "enabled": true,
+      "match": {
+        "valueGreaterThan": "1000000000000000000"
       }
     },
-    "delayBlocks": 0,
-    "createdAt": "2025-05-10T12:15:00Z",
-    "updatedAt": "2025-05-10T12:15:00Z"
-  },
-  {
-    "id": "rule-005",
-    "name": "Catch Suspicious Contract Events",
-    "enabled": true,
-    "match": {
-      "topics": [
-        "0x8c5be1e5ebec7d5bd14f714f1f2f58c5d7e7f0c1f8b46e8a14d0d5bfe93895a7"
-      ],
-      "to": "0xSuspiciousContractAddressHere"
+    {
+      "id": "rule-003",
+      "name": "ERC721 Transfer From Whitelisted Contracts",
+      "enabled": true,
+      "match": {
+        "contractType": "ERC721",
+        "method": "transferFrom",
+        "fromWhitelist": [
+          "0x1111...abcd",
+          "0x2222...abcd"
+        ],
+        "toBlacklist": [
+          "0xdeadbeef...1234"
+        ],
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        ]
+      }
     },
-    "delayBlocks": 0,
-    "createdAt": "2025-05-10T12:20:00Z",
-    "updatedAt": "2025-05-10T12:20:00Z"
-  }
-]
+    {
+      "id": "rule-004",
+      "name": "ERC1155 Safe Transfer - Watch for Specific Token ID",
+      "enabled": true,
+      "match": {
+        "contractType": "ERC1155",
+        "method": "safeTransferFrom",
+        "params": {
+          "id": "123456789",
+          "to": "0xYourGameAddressHere"
+        }
+      }
+    },
+    {
+      "id": "rule-005",
+      "name": "Catch Suspicious Contract Events",
+      "enabled": true,
+      "match": {
+        "topics": [
+          "0x8c5be1e5ebec7d5bd14f714f1f2f58c5d7e7f0c1f8b46e8a14d0d5bfe93895a7"
+        ],
+        "to": "0xSuspiciousContractAddressHere"
+      }
+    }
+  ]
+}

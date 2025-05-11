@@ -1,40 +1,36 @@
 const { z } = require("zod");
 
-const configurationSchema = z.object({
+const ruleSchema = z.object({
   id: z.string().regex(/^[a-zA-Z0-9-]+$/, "Invalid ID format"),
   name: z.string(),
   enabled: z.boolean(),
   match: z.object({}),
-  delayBlocks: z.number().min(0),
-  createdAt: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }),
-  updatedAt: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }),
 });
 
-const configurationsSchema = z.array(configurationSchema).refine(
-  (configurations) => {
-    const ids = new Set();
-    const names = new Set();
+const configurationSchema = z.object({
+  delayBlocks: z.number().min(0, "Delay blocks must be at least 0"),
+  rules: z.array(ruleSchema).refine(
+    (rules) => {
+      const ids = new Set();
+      const names = new Set();
 
-    for (const config of configurations) {
-      if (ids.has(config.id) || names.has(config.name)) {
-        return false;
+      for (const rule of rules) {
+        if (ids.has(rule.id) || names.has(rule.name)) {
+          return false;
+        }
+        ids.add(rule.id);
+        names.add(rule.name);
       }
-      ids.add(config.id);
-      names.add(config.name);
-    }
 
-    return true;
-  },
-  {
-    message: "Configurations must have unique 'id' and 'name' values",
-  }
-);
+      return true;
+    },
+    {
+      message: "Rules must have unique 'id' and 'name' values",
+    }
+  ),
+});
 
 module.exports = {
+  ruleSchema,
   configurationSchema,
-  configurationsSchema,
 };

@@ -1,26 +1,14 @@
 class ConfigurationValidator {
-  constructor({ errorHandler, configurationsSchema, configurationSchema }) {
+  constructor({ errorHandler, configurationSchema, ruleSchema }) {
     if (ConfigurationValidator.instance) {
       return ConfigurationValidator.instance;
     }
 
-    this.configurationsSchema = configurationsSchema;
     this.configurationSchema = configurationSchema;
+    this.ruleSchema = ruleSchema;
     this.errorHandler = errorHandler;
 
     ConfigurationValidator.instance = this;
-  }
-
-  assertValidConfigurations(configurations) {
-    try {
-      this.configurationsSchema.parse(configurations);
-    } catch (error) {
-      throw this.errorHandler.generateError({
-        error: new Error(error),
-        message: error.message || "Invalid configurations",
-        status: 400,
-      });
-    }
   }
 
   assertValidConfiguration(configuration) {
@@ -30,6 +18,18 @@ class ConfigurationValidator {
       throw this.errorHandler.generateError({
         error: new Error(error),
         message: error.message || "Invalid configuration",
+        status: 400,
+      });
+    }
+  }
+
+  assertValidRule(rule) {
+    try {
+      this.ruleSchema.parse(rule);
+    } catch (error) {
+      throw this.errorHandler.generateError({
+        error: new Error(error),
+        message: error.message || "Invalid rule",
         status: 400,
       });
     }

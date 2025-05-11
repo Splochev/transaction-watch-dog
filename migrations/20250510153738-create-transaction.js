@@ -100,7 +100,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      configurationId: {
+      ruleId: {
         type: Sequelize.STRING,
         allowNull: false,
       }
