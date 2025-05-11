@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       hash: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false
+        allowNull: false,
       },
       maxFeePerGas: DataTypes.STRING,
       maxPriorityFeePerGas: DataTypes.STRING,
@@ -50,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
       provider: DataTypes.JSONB,
       blobGasUsed: DataTypes.STRING,
       blobGasPrice: DataTypes.STRING,
+      configurationId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       sequelize,

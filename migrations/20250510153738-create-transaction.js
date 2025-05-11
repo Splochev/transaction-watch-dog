@@ -100,6 +100,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      configurationId: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      }
     });
   },
   async down(queryInterface, Sequelize) {
