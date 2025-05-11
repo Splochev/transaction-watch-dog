@@ -17,8 +17,15 @@ class ConfigurationService extends EventEmitter {
     this.configurationPath = this._getConfigurationsPath();
     this.configuration = [];
 
-    this._initialize();
-    this._watchConfigurationsFile();
+    try {
+      this._initialize();
+      this._watchConfigurationsFile();
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to initialize ConfigurationService:",
+        error: error
+      });
+    }
 
     ConfigurationService.instance = this;
   }
@@ -41,34 +48,65 @@ class ConfigurationService extends EventEmitter {
   }
 
   _initialize() {
-    this._ensureConfigurationFileExists();
-    this._loadConfiguration();
+    try {
+      this._ensureConfigurationFileExists();
+      this.configuration = this._loadConfiguration();
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to initialize configuration:",
+        error: error
+      });
+      throw error;
+    }
   }
 
   _ensureConfigurationFileExists() {
-    if (!fs.existsSync(this.configurationPath)) {
-      this._writeConfiguration({
-        delayBlocks: 0,
-        rules: [],
+    try {
+      if (!fs.existsSync(this.configurationPath)) {
+        this._writeConfiguration({
+          delayBlocks: 0,
+          rules: [],
+        });
+      }
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to ensure configuration file exists:",
+        error: error
       });
+      throw error;
     }
   }
 
   _loadConfiguration() {
-    const fileContents = fs.readFileSync(this.configurationPath, "utf8");
-    const configuration = JSON.parse(fileContents);
-    this.configurationValidator.assertValidConfiguration(configuration);
-    this.configuration = configuration;
-
-    this.emit("configurationUpdated", this.configuration);
+    try {
+      const fileContents = fs.readFileSync(this.configurationPath, "utf8");
+      const configuration = JSON.parse(fileContents);
+      this.configurationValidator.assertValidConfiguration(configuration);
+      this.emit("configurationUpdated", configuration);
+      return configuration;
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to load configuration:",
+        error: error
+      });
+      throw error;
+    }
   }
 
   _writeConfiguration(configuration) {
-    fs.writeFileSync(
-      this.configurationPath,
-      JSON.stringify(configuration, null, 2),
-      "utf8"
-    );
+    try {
+      fs.writeFileSync(
+        this.configurationPath,
+        JSON.stringify(configuration, null, 2),
+        "utf8"
+      );
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to write configuration:",
+        error: error
+      });
+      throw error;
+    }
   }
 
   _ruleExists(rule) {
@@ -92,7 +130,7 @@ class ConfigurationService extends EventEmitter {
     const reloadConfiguration = _.debounce(() => {
       try {
         this.logger.info("[INFO] Reloading configuration...");
-        this._loadConfiguration();
+        this.configuration = this._loadConfiguration();
         this.logger.info("[INFO] Configuration reloaded successfully.");
       } catch (error) {
         this.logger.error({
@@ -102,76 +140,91 @@ class ConfigurationService extends EventEmitter {
       }
     }, 300);
 
-    fs.watchFile(this.configurationPath, { interval: 500 }, (curr, prev) => {
-      if (curr.mtime !== prev.mtime) {
-        reloadConfiguration();
-      }
-    });
+    try {
+      fs.watchFile(this.configurationPath, { interval: 500 }, (curr, prev) => {
+        if (curr.mtime !== prev.mtime) {
+          reloadConfiguration();
+        }
+      });
 
-    this.logger.info("[INFO] Watching configuration.json for changes...");
+      this.logger.info("[INFO] Watching configuration.json for changes...");
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to watch configuration file:",
+        error: error
+      });
+      throw error;
+    }
   }
 
   cleanup() {
-    fs.unwatchFile(this.configurationPath);
-    this.logger.info("[INFO] Stopped watching configuration.json for changes.");
+    try {
+      fs.unwatchFile(this.configurationPath);
+      this.logger.info("[INFO] Stopped watching configuration.json for changes.");
+    } catch (error) {
+      this.logger.error({
+        message: "[ERROR] Failed to cleanup configuration watcher:",
+        error: error
+      });
+    }
   }
 
   get() {
-    return this.configuration;
+    return _.cloneDeep(this.configuration);
   }
 
   async addRule(rule) {
-    this.configurationValidator.assertValidRule(rule);
+      this.configurationValidator.assertValidRule(rule);
 
-    if (this._ruleExists(rule)) {
-      throw this.errorHandler.generateError({
-        message: "Rule already exists",
-        status: 400,
-      });
-    }
+      if (this._ruleExists(rule)) {
+        throw this.errorHandler.generateError({
+          message: "Rule already exists",
+          status: 400,
+        });
+      }
 
-    this.configuration.rules.push(rule);
-    this._writeConfiguration(this.configuration);
+      this.configuration.rules.push(rule);
+      this._writeConfiguration(this.configuration);
   }
 
   async updateDelayBlocks(delayBlocks) {
-    if (Number(delayBlocks) < 0) {
-      throw this.errorHandler.generateError({
-        message: "Delay blocks must be a positive number",
-        status: 400,
-      });
-    }
+      if (Number(delayBlocks) < 0 || isNaN(Number(delayBlocks))) {
+        throw this.errorHandler.generateError({
+          message: "Delay blocks must be a positive number",
+          status: 400,
+        });
+      }
 
-    this.configuration.delayBlocks = delayBlocks;
-    this._writeConfiguration(this.configuration);
+      this.configuration.delayBlocks = Number(delayBlocks);
+      this._writeConfiguration(this.configuration);
   }
 
   async updateRule(rule) {
-    this.configurationValidator.assertValidRule(rule);
+      this.configurationValidator.assertValidRule(rule);
 
-    const index = this._findRuleIndexById(rule.id);
-    if (index === -1) {
-      throw this.errorHandler.generateError({
-        message: "Rule with that ID was not found",
-        status: 404,
-      });
-    }
+      const index = this._findRuleIndexById(rule.id);
+      if (index === -1) {
+        throw this.errorHandler.generateError({
+          message: "Rule with that ID was not found",
+          status: 404,
+        });
+      }
 
-    this.configuration.rules[index] = rule;
-    this._writeConfiguration(this.configuration);
+      this.configuration.rules[index] = rule;
+      this._writeConfiguration(this.configuration);
   }
 
   async deleteRule(ruleId) {
-    const index = this._findRuleIndexById(ruleId);
-    if (index === -1) {
-      throw this.errorHandler.generateError({
-        message: "Rule with that ID was not found",
-        status: 404,
-      });
-    }
+      const index = this._findRuleIndexById(ruleId);
+      if (index === -1) {
+        throw this.errorHandler.generateError({
+          message: "Rule with that ID was not found",
+          status: 404,
+        });
+      }
 
-    this.configuration.rules.splice(index, 1);
-    this._writeConfiguration(this.configuration);
+      this.configuration.rules.splice(index, 1);
+      this._writeConfiguration(this.configuration);
   }
 }
 
