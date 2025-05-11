@@ -91,17 +91,14 @@ class ConfigurationService extends EventEmitter {
   _watchConfigurationsFile() {
     const reloadConfiguration = _.debounce(() => {
       try {
-        this.logger.info("[INFO] Reloading configuration...", true);
+        this.logger.info("[INFO] Reloading configuration...");
         this._loadConfiguration();
-        this.logger.info("[INFO] Configuration reloaded successfully.", true);
+        this.logger.info("[INFO] Configuration reloaded successfully.");
       } catch (error) {
-        this.logger.error(
-          {
-            message: "[ERROR] Failed to reload configuration:",
-            error: error.message,
-          },
-          true
-        );
+        this.logger.error({
+          message: "[ERROR] Failed to reload configuration:",
+          error: error.message,
+        });
       }
     }, 300);
 
@@ -111,12 +108,12 @@ class ConfigurationService extends EventEmitter {
       }
     });
 
-    this.logger.info("[INFO] Watching configuration.json for changes...", true);
+    this.logger.info("[INFO] Watching configuration.json for changes...");
   }
 
   cleanup() {
     fs.unwatchFile(this.configurationPath);
-    this.logger.info("[INFO] Stopped watching configuration.json for changes.", true);
+    this.logger.info("[INFO] Stopped watching configuration.json for changes.");
   }
 
   get() {

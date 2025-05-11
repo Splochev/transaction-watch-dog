@@ -10,6 +10,7 @@ class EthereumService {
     this._initializeProvider();
     this._initializeConfiguration();
 
+    this.monitorBlockchain();
     EthereumService.instance = this;
   }
 
@@ -31,13 +32,88 @@ class EthereumService {
     this.provider = new ethers.JsonRpcProvider(url);
   }
 
+  async monitorBlockchain() {
+    this.fromBlock = null;
+    this.toBlock = null;
+    const delayBlocks = this.delayBlocks || 0;
+
+    this.provider.on("block", async (blockNumber) => {
+      if (this.fromBlock === null) {
+        this.fromBlock = blockNumber;
+        this.toBlock = blockNumber + delayBlocks;
+      }
+
+      if (blockNumber >= this.toBlock) {
+        this.monitorTransactions(this.fromBlock, this.toBlock);
+        this.fromBlock = blockNumber;
+        this.toBlock = blockNumber + delayBlocks;
+      }
+    });
+
+    this.logger.info("[INFO] Ethereum blockchain monitoring started...");
+  }
+
+  async monitorTransactions(fromBlock, toBlock) {
+    const rules = this.rules;
+
+    for (const rule of rules) {
+      if (!rule.enabled) continue;
+
+      const filter = {
+        address: rule.match.address,
+        topics: rule.match.topics || undefined,
+        fromBlock: fromBlock,
+        toBlock: toBlock,
+      };
+
+      const logs = await this.provider.getLogs(filter);
+      await new Promise((r) => setTimeout(r, 2000));
+      const processedTransactions = logs.map((log) => {
+        return {
+          blockNumber: log.blockNumber,
+          blockHash: log.blockHash,
+          transactionHash: log.transactionHash,
+          address: log.address,
+          data: log.data,
+          topics: log.topics,
+          ruleId: rule.id,
+        };
+      });
+      await this.insertTransaction(processedTransactions);
+    }
+  }
+
+  async insertTransaction(transactions) {
+    if (!transactions || transactions.length === 0) return;
+
+    try {
+      const uniqueTransactions = Array.from(
+        new Map(transactions.map((tx) => [tx.transactionHash, tx])).values()
+      );
+
+      await this.transactionModel.bulkCreate(uniqueTransactions, {
+        updateOnDuplicate: [
+          "blockNumber",
+          "blockHash",
+          "address",
+          "data",
+          "topics",
+          "ruleId",
+          "updatedAt",
+        ],
+      });
+    } catch (error) {
+      console.error("[ERROR] Failed to insert transactions:", error);
+    }
+  }
+
   _initializeConfiguration() {
     const configuration = this.configurationService.get();
     this.rules = configuration.rules;
     this.delayBlocks = configuration.delayBlocks;
 
     this.configurationService.on("configurationUpdated", (newConfiguration) => {
-      this.logger.info("[INFO] Configuration updated in EthereumService", true);
+      this.logger.info("[INFO] Configuration updated in EthereumService");
       this.rules = newConfiguration.rules;
       this.delayBlocks = newConfiguration.delayBlocks;
     });

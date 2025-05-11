@@ -97,7 +97,7 @@ class Logger {
     }
   }
 
-  info(message, logToConsole = false) {
+  info(message, logToConsole = true) {
     this.logger.info(message);
     if (logToConsole) {
       console.log(message);

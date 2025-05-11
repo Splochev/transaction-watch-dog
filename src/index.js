@@ -27,12 +27,15 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   const logger = req.container.resolve("logger");
-  logger.info({
-    method: req.method,
-    path: req.path,
-    query: req.query,
-    body: req.body,
-  });
+  logger.info(
+    {
+      method: req.method,
+      path: req.path,
+      query: req.query,
+      body: req.body,
+    },
+    false
+  );
   next();
 });
 
@@ -40,7 +43,7 @@ mountApi(app);
 
 app.use((error, req, res, next) => {
   const logger = req.container.resolve("logger");
-  logger.error(error, true);
+  logger.error(error);
   res.status(error.status || 500).json({
     error: {
       message: error.message || "Internal Server Error",
@@ -50,21 +53,21 @@ app.use((error, req, res, next) => {
 
 const server = app.listen(PORT, () => {
   const logger = container.resolve("logger");
-  logger.info(`Server running on port ${PORT}`, true);
+  logger.info(`Server running on port ${PORT}`);
 });
 
 const shutdown = async () => {
   const logger = container.resolve("logger");
   try {
-    logger.info("Shutting down application...", true);
+    logger.info("Shutting down application...");
     ethereumService.cleanup();
     configurationService.cleanup();
     server.close(() => {
-      logger.info("Server closed", true);
+      logger.info("Server closed");
       process.exit(0);
     });
   } catch (error) {
-    logger.error({ message: "Error during shutdown", error }, true);
+    logger.error({ message: "Error during shutdown", error });
     process.exit(1);
   }
 };

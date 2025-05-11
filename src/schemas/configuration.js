@@ -4,7 +4,10 @@ const ruleSchema = z.object({
   id: z.string().regex(/^[a-zA-Z0-9-]+$/, "Invalid ID format"),
   name: z.string(),
   enabled: z.boolean(),
-  match: z.object({}),
+  match: z.object({
+    address: z.string().optional(), // Contract address to monitor
+    topics: z.array(z.string()).optional() // Event topics to filter
+  }),
 });
 
 const configurationSchema = z.object({

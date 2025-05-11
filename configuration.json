@@ -1,40 +1,34 @@
 {
-  "delayBlocks": 6,
+  "delayBlocks": 1,
   "rules": [
     {
       "id": "rule-001",
-      "name": "Monitor USDT Transfers to Specific Wallet",
+      "name": "Monitor USDT Transfers",
       "enabled": true,
       "match": {
-        "to": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        "method": "transfer",
-        "params": {
-          "to": "0xYourTargetAddressHere"
-        }
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        ]
       }
     },
     {
       "id": "rule-002",
-      "name": "High Value ETH Transfers",
+      "name": "Monitor USDC Transfers",
       "enabled": true,
       "match": {
-        "valueGreaterThan": "1000000000000000000"
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        ]
       }
     },
     {
       "id": "rule-003",
-      "name": "ERC721 Transfer From Whitelisted Contracts",
+      "name": "Monitor DAI Transfers",
       "enabled": true,
       "match": {
-        "contractType": "ERC721",
-        "method": "transferFrom",
-        "fromWhitelist": [
-          "0x1111...abcd",
-          "0x2222...abcd"
-        ],
-        "toBlacklist": [
-          "0xdeadbeef...1234"
-        ],
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
         "topics": [
           "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
         ]
@@ -42,26 +36,35 @@
     },
     {
       "id": "rule-004",
-      "name": "ERC1155 Safe Transfer - Watch for Specific Token ID",
+      "name": "Monitor Chainlink (LINK) Transfers",
       "enabled": true,
       "match": {
-        "contractType": "ERC1155",
-        "method": "safeTransferFrom",
-        "params": {
-          "id": "123456789",
-          "to": "0xYourGameAddressHere"
-        }
+        "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
+        "topics": [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        ]
       }
     },
     {
       "id": "rule-005",
-      "name": "Catch Suspicious Contract Events",
+      "name": "Monitor CryptoKitties NFT Transfers",
       "enabled": true,
       "match": {
+        "address": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
         "topics": [
-          "0x8c5be1e5ebec7d5bd14f714f1f2f58c5d7e7f0c1f8b46e8a14d0d5bfe93895a7"
-        ],
-        "to": "0xSuspiciousContractAddressHere"
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        ]
+      }
+    },
+    {
+      "id": "rule-006",
+      "name": "Monitor Uniswap V2 New Pair Creations",
+      "enabled": true,
+      "match": {
+        "address": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+        "topics": [
+          "0x0d3648bd0f6ba80134a33ba9275ac585d9d315f0ad8355cddefde31afa28d0e9"
+        ]
       }
     }
   ]

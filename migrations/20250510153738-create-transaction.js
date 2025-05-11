@@ -9,100 +9,37 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      blockNumber: {
-        type: Sequelize.INTEGER,
+      transactionHash: {
+        type: Sequelize.STRING(500),
+        unique: true,
+        allowNull: false,
       },
       blockHash: {
         type: Sequelize.STRING(500),
       },
-      chainId: {
+      blockNumber: {
+        type: Sequelize.INTEGER,
+      },
+      address: {
         type: Sequelize.STRING(500),
       },
       data: {
         type: Sequelize.STRING(500),
       },
-      from: {
-        type: Sequelize.STRING(500),
+      topics:{
+        type: Sequelize.JSONB,
       },
-      gasLimit: {
-        type: Sequelize.STRING(500),
-      },
-      gasPrice: {
-        type: Sequelize.STRING(500),
-      },
-      hash: {
-        type: Sequelize.STRING(500),
-        unique: true,
+      ruleId: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      maxFeePerGas: {
-        type: Sequelize.STRING(500),
-      },
-      maxPriorityFeePerGas: {
-        type: Sequelize.STRING(500),
-      },
-      maxFeePerBlobGas: {
-        type: Sequelize.STRING(500),
-      },
-      nonce: {
-        type: Sequelize.INTEGER,
-      },
-      to: {
-        type: Sequelize.STRING(500),
-      },
-      type: {
-        type: Sequelize.INTEGER,
-      },
-      value: {
-        type: Sequelize.STRING(500),
-      },
-      contractAddress: {
-        type: Sequelize.STRING(500),
-      },
-      logsBloom: {
-        type: Sequelize.STRING(500),
-      },
-      gasUsed: {
-        type: Sequelize.STRING(500),
-      },
-      cumulativeGasUsed: {
-        type: Sequelize.STRING(500),
-      },
-      status: {
-        type: Sequelize.INTEGER,
-      },
-      accessList: {
-        type: Sequelize.JSONB,
-      },
-      signature: {
-        type: Sequelize.JSONB,
-      },
-      blobVersionedHashes: {
-        type: Sequelize.JSONB,
-      },
-      index: {
-        type: Sequelize.INTEGER,
-      },
-      provider: {
-        type: Sequelize.JSONB,
-      },
-      blobGasUsed: {
-        type: Sequelize.STRING(500),
-      },
-      blobGasPrice: {
-        type: Sequelize.STRING(500),
-      },
-      createdAt: {
+            createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-      },
-      ruleId: {
-        type: Sequelize.STRING,
-        allowNull: false,
       }
     });
   },
