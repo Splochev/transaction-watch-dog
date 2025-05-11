@@ -1,7 +1,17 @@
-module.exports = ({}) => ({
-  health: async (req, res, next) => {
+module.exports = ({ ethereumService }) => ({
+  get: async (req, res, next) => {
     try {
-      res.json({ status: "ok" });
+      const { transactionHash, blockNumber, page, ruleId, orderBy, sortType } =
+        req.query;
+      const transactions = await ethereumService.get({
+        transactionHash,
+        blockNumber,
+        page,
+        ruleId,
+        orderBy,
+        sortType,
+      });
+      res.status(200).json(transactions);
     } catch (error) {
       next(error);
     }

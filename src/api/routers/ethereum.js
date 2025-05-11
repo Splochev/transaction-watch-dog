@@ -5,6 +5,6 @@ const createController = require('../controllers/ethereum');
 const api = makeInvoker(createController);
 const router = Router();
 
-router.get('/', api('health'));
+router.get('/', api('get'));
 
 module.exports = router;

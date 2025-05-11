@@ -173,6 +173,40 @@ class EthereumService {
       this.logger.error({ message: "[ERROR] Failed to clean up", error });
     }
   }
+
+  async get({
+    transactionHash,
+    blockNumber,
+    page,
+    ruleId,
+    orderBy = "createdAt",
+    sortType = "DESC",
+  }) {
+    try {
+      const where = {};
+      if (transactionHash) where.transactionHash = transactionHash;
+      if (blockNumber) where.blockNumber = blockNumber;
+      if (ruleId) where.ruleId = ruleId;
+
+      const limit = 100;
+      const offset = page ? (page - 1) * limit : 0;
+
+      const transactions = await this.transactionModel.findAndCountAll({
+        where,
+        limit,
+        offset,
+        order: [[orderBy, sortType]],
+      });
+
+      return transactions.rows;
+    } catch (error) {
+      throw this.errorHandler.generateError({
+        message: "Failed to get transactions",
+        status: 500,
+        error: error,
+      });
+    }
+  }
 }
 
 module.exports = EthereumService;
