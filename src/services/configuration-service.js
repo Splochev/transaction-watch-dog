@@ -77,14 +77,17 @@ class ConfigurationService {
   _watchConfigurationsFile() {
     const reloadConfigurations = _.debounce(() => {
       try {
-        this.logger.log("[INFO] Reloading configurations...");
+        this.logger.info("[INFO] Reloading configurations...", true);
         this._loadConfigurations();
-        this.logger.log("[INFO] Configurations reloaded successfully.");
+        this.logger.info("[INFO] Configurations reloaded successfully.", true);
       } catch (error) {
-        this.logger.log({
-          message: "[ERROR] Failed to reload configurations:",
-          error: error.message,
-        });
+        this.logger.error(
+          {
+            message: "[ERROR] Failed to reload configurations:",
+            error: error.message,
+          },
+          true
+        );
       }
     }, 300);
 
@@ -94,7 +97,7 @@ class ConfigurationService {
       }
     });
 
-    this.logger.log("[INFO] Watching configuration.json for changes...");
+    this.logger.info("[INFO] Watching configuration.json for changes...", true);
   }
 
   get() {

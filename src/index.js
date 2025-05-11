@@ -39,8 +39,7 @@ mountApi(app);
 
 app.use((error, req, res, next) => {
   const logger = req.container.resolve("logger");
-  logger.error(error);
-  logger.log(error);
+  logger.error(error, true);
   res.status(error.status || 500).json({
     error: {
       message: error.message || "Internal Server Error",
@@ -50,5 +49,5 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, () => {
   const logger = container.resolve("logger");
-  logger.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${PORT}`, true);
 });

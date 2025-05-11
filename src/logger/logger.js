@@ -75,7 +75,7 @@ class Logger {
     });
   }
 
-  error(message) {
+  error(message, logToConsole = false) {
     if (message.stack) {
       this.logger.error({
         message: message.message,
@@ -84,14 +84,24 @@ class Logger {
     } else {
       this.logger.error(message);
     }
+
+    if (logToConsole) {
+      console.error(message);
+    }
   }
 
-  warn(message) {
+  warn(message, logToConsole = false) {
     this.logger.warn(message);
+    if (logToConsole) {
+      console.console.warn(message);
+    }
   }
 
-  info(message) {
+  info(message, logToConsole = false) {
     this.logger.info(message);
+    if (logToConsole) {
+      console.log(message);
+    }
   }
 
   log(message) {
