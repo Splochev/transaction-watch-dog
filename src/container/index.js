@@ -19,17 +19,17 @@ module.exports = function setupContainer() {
   const container = createContainer();
 
   container.register({
+    db: asValue(db),
+    transactionHashesSchema: asValue(transactionHashesSchema),
+    transactionsSchema: asValue(transactionsSchema),
+    configurationSchema: asValue(configurationSchema),
+    configurationsSchema: asValue(configurationsSchema),
     logger: asClass(Logger).singleton(),
     errorHandler: asClass(ErrorHandler).singleton(),
     ethereumService: asClass(EthereumService).singleton(),
     configurationService: asClass(ConfigurationService).singleton(),
     ethereumValidator: asClass(EthereumValidator).singleton(),
     configurationValidator: asClass(ConfigurationValidator).singleton(),
-    db: asValue(db),
-    transactionHashesSchema: asValue(transactionHashesSchema),
-    transactionsSchema: asValue(transactionsSchema),
-    configurationSchema: asValue(configurationSchema),
-    configurationsSchema: asValue(configurationsSchema),
   });
 
   return container;

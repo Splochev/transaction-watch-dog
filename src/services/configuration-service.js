@@ -1,9 +1,11 @@
+const EventEmitter = require("events");
 const _ = require("lodash");
 const path = require("path");
 const fs = require("fs");
 
-class ConfigurationService {
+class ConfigurationService extends EventEmitter {
   constructor({ logger, errorHandler, configurationValidator }) {
+    super();
     if (ConfigurationService.instance) {
       return ConfigurationService.instance;
     }
@@ -23,6 +25,13 @@ class ConfigurationService {
 
   initialize() {
     this();
+  }
+
+  getInstance() {
+    if (!ConfigurationService.instance) {
+      throw new Error("ConfigurationService is not initialized");
+    }
+    return ConfigurationService.instance;
   }
 
   _getConfigurationsPath() {
@@ -47,6 +56,9 @@ class ConfigurationService {
     const configurations = JSON.parse(fileContents);
     this.configurationValidator.assertValidConfigurations(configurations);
     this.configurations = configurations;
+
+    // Emit an event whenever configurations are loaded or updated
+    this.emit("configurationsUpdated", this.configurations);
   }
 
   _writeConfigurations(configurations) {

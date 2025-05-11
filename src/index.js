@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 container.resolve("configurationService");
+container.resolve("ethereumService");
 
 app.use((req, res, next) => {
   res.setTimeout(SERVER_TIMEOUT, () => {

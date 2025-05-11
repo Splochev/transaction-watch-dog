@@ -2,7 +2,12 @@ const { ethers } = require("ethers");
 const _ = require("lodash");
 
 class EthereumService {
-  constructor({ logger, errorHandler, ethereumValidator }) {
+  constructor({
+    logger,
+    errorHandler,
+    ethereumValidator,
+    configurationService,
+  }) {
     if (EthereumService.instance) {
       return EthereumService.instance;
     }
@@ -18,7 +23,22 @@ class EthereumService {
     this.errorHandler = errorHandler;
     this.ethereumValidator = ethereumValidator;
 
+    this.configurationService = configurationService;
+    this.configurations = this.configurationService.get();
+
+    this.configurationService.on(
+      "configurationsUpdated",
+      (newConfigurations) => {
+        this.logger.info("[INFO] Configurations updated in EthereumService", true);
+        this.configurations = newConfigurations;
+      }
+    );
+
     EthereumService.instance = this;
+  }
+
+  initialize() {
+    this();
   }
 
   async getTransactionsByHashes(transactionHashes, transactionObjects) {
@@ -52,7 +72,8 @@ class EthereumService {
       receiptPromises.push(this.provider.getTransactionReceipt(hash));
     });
 
-    const transactions = transactionObjects || (await Promise.all(transactionPromises));
+    const transactions =
+      transactionObjects || (await Promise.all(transactionPromises));
     const receipts = await Promise.all(receiptPromises);
     return { transactions, receipts };
   }
