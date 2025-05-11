@@ -1,5 +1,9 @@
 module.exports = class ErrorHandler {
   generateError({ error, message, status }) {
+    if (error) {
+      error = new Error(error);
+    }
+
     if (!error) {
       error = new Error(message);
     } else if (error && message) {
