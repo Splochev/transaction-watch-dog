@@ -16,7 +16,7 @@ A modular, extensible Ethereum blockchain monitoring service with dynamic rule-b
 - [API Usage](#api-usage)
 - [Logging](#logging)
 - [Development](#development)
-- [License](#license)
+- [Testing](#testing)
 
 ---
 
@@ -131,7 +131,7 @@ A modular, extensible Ethereum blockchain monitoring service with dynamic rule-b
 - **Dynamic Rules**: Rules are defined in `configuration.json` and can be managed via the API.
 - **Hot Reload**: Changes to `configuration.json` are detected and applied automatically.
 - **Environment Variables**: See `.env.sample` for all available options.
-
+- **Edit configurations** via the API or directly in `configuration.json`.
 ---
 
 ## API Usage
@@ -188,4 +188,18 @@ curl -X POST http://localhost:3000/api/config \
   npm run dev
   ```
 
-- **Edit configurations** via the API or directly in `configuration.json`.
+---
+
+## Testing
+
+This project includes a comprehensive suite of unit tests to ensure functionality and reliability.
+
+### Run Tests
+
+To execute the tests, use the following command:
+
+```sh
+npm test
+```
+
+
