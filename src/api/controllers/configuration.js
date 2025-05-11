@@ -1,5 +1,3 @@
-const { create } = require("lodash");
-
 module.exports = ({ configurationService }) => ({
   get: async (req, res, next) => {
     try {
