@@ -5,8 +5,16 @@ const ruleSchema = z.object({
   name: z.string(),
   enabled: z.boolean(),
   match: z.object({
-    address: z.string().optional(), // Contract address to monitor
-    topics: z.array(z.string()).optional() // Event topics to filter
+    address: z
+      .string()
+      .regex(
+        /^0x[a-fA-F0-9]{40}$/,
+        "Address must be a valid Ethereum address starting with 0x"
+      )
+      .optional(),
+    topics: z
+      .array(z.string().regex(/^0x[a-fA-F0-9]+$/, "Topics must start with 0x"))
+      .optional(),
   }),
 });
 
