@@ -53,12 +53,21 @@ class EthereumService {
           if (this.fromBlock === null) {
             this.fromBlock = blockNumber;
             this.toBlock = blockNumber + delayBlocks;
+            this.logger.info(
+              `[INFO] Initial block range set: fromBlock=${this.fromBlock}, toBlock=${this.toBlock}`
+            );
           }
 
           if (blockNumber >= this.toBlock) {
-            await this.monitorTransactions(this.fromBlock, this.toBlock);
+            this.logger.info(
+              `[INFO] Monitoring transactions for block range: fromBlock=${this.fromBlock}, toBlock=${this.toBlock}`
+            );
+            this.monitorTransactions(this.fromBlock, this.toBlock);
             this.fromBlock = blockNumber;
             this.toBlock = blockNumber + delayBlocks;
+            this.logger.info(
+              `[INFO] Updated block range: fromBlock=${this.fromBlock}, toBlock=${this.toBlock}`
+            );
           }
         } catch (error) {
           this.logger.error({
