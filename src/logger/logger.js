@@ -2,6 +2,8 @@ const winston = require("winston");
 const path = require("path");
 const fs = require("fs");
 
+const CONSOLE_LOG = process.env.CONSOLE_LOG === "true";
+
 class Logger {
   constructor() {
     if (Logger.instance) {
@@ -61,10 +63,6 @@ class Logger {
       }), // 'a' flag for appending to the file
     ];
 
-    if (process.env.CONSOLE_LOG === "true") {
-      transportsArray.push(new winston.transports.Console());
-    }
-
     return winston.createLogger({
       transports: transportsArray,
       format: winston.format.combine(
@@ -75,7 +73,7 @@ class Logger {
     });
   }
 
-  error(message, logToConsole = false) {
+  error(message, logToConsole = CONSOLE_LOG) {
     if (message.stack) {
       this.logger.error({
         message: message.message,
@@ -90,14 +88,14 @@ class Logger {
     }
   }
 
-  warn(message, logToConsole = false) {
+  warn(message, logToConsole = CONSOLE_LOG) {
     this.logger.warn(message);
     if (logToConsole) {
       console.console.warn(message);
     }
   }
 
-  info(message, logToConsole = true) {
+  info(message, logToConsole = CONSOLE_LOG) {
     this.logger.info(message);
     if (logToConsole) {
       console.log(message);

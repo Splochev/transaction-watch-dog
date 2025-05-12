@@ -171,6 +171,7 @@ curl -X POST http://localhost:3000/api/config \
 - Logs are stored in the `logs/` directory, one file per day.
 - Log retention is controlled by `MAX_DAYS_TO_STORE_LOGS` in your `.env`.
 - Console logging can be enabled with `CONSOLE_LOG=true`.
+- DB queries logging can be enabled with `LOG_SEQUALIZE=true`
 
 ---
 
