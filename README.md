@@ -44,42 +44,53 @@ A modular, extensible Ethereum blockchain monitoring service with dynamic rule-b
 |-- README.md
 |-- TASK.md
 |-- configuration.json
-|-- .env.sample
-|-- logs/
-|   `-- logs-YYYY-MM-DD.log
-|-- migrations/
-|   `-- <timestamp>-create-transaction.js
-|-- models/
+|-- logs
+|   |-- logs-2025-05-11.log
+|   `-- logs-2025-05-12.log
+|-- migrations
+|   `-- 20250510153738-create-transaction.js
+|-- models
 |   |-- index.js
 |   `-- transaction.js
-|-- package.json
 |-- package-lock.json
-`-- src/
-    |-- api/
-    |   |-- controllers/
-    |   |   |-- configuration.js
-    |   |   `-- ethereum.js
-    |   |-- index.js
-    |   `-- routers/
-    |       |-- configuration.js
-    |       `-- ethereum.js
-    |-- container/
-    |   `-- index.js
-    |-- db/
-    |   |-- config.js
-    |   `-- index.js
-    |-- index.js
-    |-- logger/
-    |   `-- logger.js
-    |-- schemas/
-    |   `-- configuration.js
-    |-- services/
-    |   |-- configuration-service.js
-    |   `-- ethereum-service.js
-    |-- utils/
-    |   `-- error-handler.js
-    `-- validators/
-        `-- configuration.js
+|-- package.json
+|-- src
+|   |-- api
+|   |   |-- controllers
+|   |   |   |-- configuration.js
+|   |   |   `-- ethereum.js
+|   |   |-- index.js
+|   |   `-- routers
+|   |       |-- configuration.js
+|   |       `-- ethereum.js
+|   |-- container
+|   |   `-- index.js
+|   |-- db
+|   |   |-- config.js
+|   |   `-- index.js
+|   |-- index.js
+|   |-- logger
+|   |   `-- logger.js
+|   |-- schemas
+|   |   `-- configuration.js
+|   |-- services
+|   |   |-- configuration-service.js
+|   |   `-- ethereum-service.js
+|   |-- utils
+|   |   `-- error-handler.js
+|   `-- validators
+|       `-- configuration.js
+`-- tests
+    |-- api
+    |   |-- configuration.controller.test.js
+    |   `-- ethereum.controller.test.js
+    |-- schemas
+    |   `-- configuration-schema.test.js
+    |-- services
+    |   |-- configuration-service.test.js
+    |   `-- ethereum-service.test.js
+    `-- utils
+        `-- error-handler.test.js
 ```
 
 ---
